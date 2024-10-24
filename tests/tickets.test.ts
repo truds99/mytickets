@@ -57,3 +57,29 @@ describe("GET /tickets/:eventId", () => {
         
     })
 })
+
+describe("PUT /tickets", () => {
+
+    it("should updated a ticket to used", async () => {
+
+        const { id } = await createNewEvent();
+        const ticketData = await createNewTicket(id);
+
+        const { status } = await api.put(`/tickets/use/${ticketData.id}`);
+
+        const ticketUpdated = await verifyIfTicketWasUptated(ticketData.id);
+        expect(status).toBe(204);
+        expect(ticketUpdated).toBe(true);
+
+    })
+})
+
+async function verifyIfTicketWasUptated(id: number) {
+    const ticketUpdated = await prisma.ticket.findUnique({
+        where: {
+            id,
+            used: true
+        }
+    });
+    return (!!ticketUpdated);
+}

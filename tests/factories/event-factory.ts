@@ -3,6 +3,28 @@ import { faker } from "@faker-js/faker"
 import { Event } from "@prisma/client";
 
 export async function createNewEvent() {
+
+    const eventData = await createEventData();
+    
+    const eventCreated = await prisma.event.create({
+        data: eventData,
+    });
+
+    return eventCreated;
+}
+
+export async function createEventData() {
+
+    const eventName = await createNewEventName();
+
+    const eventData = {
+        name: eventName,
+        date: faker.date.future({ years: 3 })
+    }
+    return eventData;
+}
+
+export async function createNewEventName() {
     let eventName: string;
     let eventExists: Event;
 
@@ -15,12 +37,5 @@ export async function createNewEvent() {
         });
     } while (eventExists);
 
-    const eventCreated = await prisma.event.create({
-        data: {
-            name: eventName,
-            date: faker.date.future({ years: 3 }),
-        },
-    });
-
-    return eventCreated;
+    return eventName;
 }

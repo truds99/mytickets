@@ -1,6 +1,6 @@
 import supertest from "supertest";
 import app from '../src/app';
-import { createNewEvent } from "./factories/event-factory";
+import { createEventData, createNewEvent } from "./factories/event-factory";
 
 const api = supertest(app);
 
@@ -43,6 +43,26 @@ describe("GET /events/:id", () => {
             })
         );
         
+    })
+})
+
+describe("POST /events", () => {
+
+    it("should create a new event", async () => {
+
+        const eventData = await createEventData();
+        
+        const { status, body } = await api.post(`/events`).send(eventData);
+
+        expect(status).toBe(201);
+        expect(body).toEqual(
+            expect.objectContaining({
+                id: expect.any(Number),
+                name: expect.any(String),
+                date: expect.any(String)
+            })
+        );
+
     })
 })
 

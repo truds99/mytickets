@@ -6,15 +6,9 @@ import { createNewTicket, createTicketData } from "./factories/ticket-factory";
 
 const api = supertest(app);
 
-beforeEach(async () => {
-    await prisma.event.deleteMany();
-    await prisma.ticket.deleteMany();
-})
-
 describe("POST /tickets", () => {
 
     it("should create a new ticket", async () => {
-
         const { id } = await createNewEvent();
         const ticketData = createTicketData(id);
 
@@ -37,7 +31,6 @@ describe("POST /tickets", () => {
 describe("GET /tickets/:eventId", () => {
 
     it("should return tickets of a specific event", async () => {
-
         const { id } = await createNewEvent();
         await createNewTicket(id);
 
@@ -83,3 +76,4 @@ async function verifyIfTicketWasUptated(id: number) {
     });
     return (!!ticketUpdated);
 }
+

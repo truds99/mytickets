@@ -11,4 +11,4 @@ eventsRouter.post("/events", validateSchema(eventSchema), postEvent);
 eventsRouter.put("/events/:id", validateSchema(eventSchema), putEvent);
 eventsRouter.delete("/events/:id", deleteEvent);
 
-export default eventsRouter;
+export default eventsRouter; 

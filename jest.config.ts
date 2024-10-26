@@ -6,6 +6,5 @@ module.exports = {
     transform: {
       ".+\\.ts$": "ts-jest",
     },
-    testMatch: ["<rootDir>/tests/*.(test|spec).ts"],
-    maxWorkers: 1
+    testMatch: ["<rootDir>/tests/*.(test|spec).ts"]
   };

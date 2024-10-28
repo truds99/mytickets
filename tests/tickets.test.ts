@@ -46,6 +46,20 @@ describe("POST /tickets", () => {
 
     });
 
+    it("shouldn't create a ticket because code is already registered", async () => {
+        const { id } = await createNewEvent();
+        const ticketData = await createTicketData(id);
+
+        await api.post(`/tickets`).send(ticketData);
+
+        const secondTicket = ticketData;
+
+        const { status } = await api.post(`/tickets`).send(secondTicket);
+
+        expect(status).toBe(409);
+
+    });
+
 })
 
 describe("GET /tickets/:eventId", () => {
@@ -69,6 +83,16 @@ describe("GET /tickets/:eventId", () => {
         )
         
     })
+
+    it("shouldn't return tickets because parameter is invalid", async () => {
+        const { id } = await createNewEvent();
+        await createNewTicket(id);
+
+        const { status } = await api.get(`/tickets/ticket`);
+
+        expect(status).toBe(400);
+    })
+
 })
 
 describe("PUT /tickets", () => {
@@ -84,6 +108,30 @@ describe("PUT /tickets", () => {
         expect(status).toBe(204);
         expect(ticketUpdated).toBe(true);
 
+    })
+
+    it("shouldn't updated a ticket because event is expired", async () => {
+
+        const { id } = await createExpiredEvent();
+        const ticketData = await createNewTicket(id);
+
+        const { status } = await api.put(`/tickets/use/${ticketData.id}`);
+
+        expect(status).toBe(403);
+    
+    })
+
+    it("shouldn't updated a ticket because ticket was not found", async () => {
+
+        const { id } = await createExpiredEvent();
+        const ticketData = await createNewTicket(id);
+
+        ticketData.id ++;
+
+        const { status } = await api.put(`/tickets/use/${ticketData.id}`);
+
+        expect(status).toBe(404);
+    
     })
 })
 

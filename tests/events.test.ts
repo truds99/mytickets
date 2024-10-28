@@ -45,6 +45,17 @@ describe("GET /events/:id", () => {
         );
         
     })
+
+    it("shouldn't return an specific event because id was not found", async () => {
+        let { id } = await createNewEvent();
+
+        id ++;
+
+        const { status } = await api.get(`/events/${id}`);
+
+        expect(status).toBe(404);
+        
+    })
 })
 
 describe("POST /events", () => {
@@ -63,6 +74,21 @@ describe("POST /events", () => {
                 date: expect.any(String)
             })
         );
+
+    })
+
+    it("shouldn't create a new event because name is already registered", async () => {
+
+        const eventData = await createEventData();
+        
+        await api.post(`/events`).send(eventData);
+
+        const secondEvent = eventData;
+
+        const { status } = await api.post(`/events`).send(secondEvent);
+
+        expect(status).toBe(409);
+        
 
     })
 })

@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import app from '../src/app';
 import prisma from "database";
-import { createNewEvent } from "./factories/event-factory";
+import { createExpiredEvent, createNewEvent } from "./factories/event-factory";
 import { createNewTicket, createTicketData } from "./factories/ticket-factory";
 
 const api = supertest(app);
@@ -10,7 +10,7 @@ describe("POST /tickets", () => {
 
     it("should create a new ticket", async () => {
         const { id } = await createNewEvent();
-        const ticketData = createTicketData(id);
+        const ticketData = await createTicketData(id);
 
         const { status, body } = await api.post(`/tickets`).send(ticketData);
 
@@ -24,8 +24,18 @@ describe("POST /tickets", () => {
                 eventId: expect.any(Number)
             })
         );
+    });
 
-    })
+    it("shouldn't create a ticket because event is expired", async () => {
+        const { id } = await createExpiredEvent();
+        const ticketData = await createTicketData(id);
+
+        const { status, error } = await api.post(`/tickets`).send(ticketData);
+
+        expect(status).toBe(403);
+
+    });
+
 })
 
 describe("GET /tickets/:eventId", () => {
@@ -67,6 +77,8 @@ describe("PUT /tickets", () => {
     })
 })
 
+
+
 async function verifyIfTicketWasUptated(id: number) {
     const ticketUpdated = await prisma.ticket.findUnique({
         where: {
@@ -76,4 +88,7 @@ async function verifyIfTicketWasUptated(id: number) {
     });
     return (!!ticketUpdated);
 }
+
+
+
 

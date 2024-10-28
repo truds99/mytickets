@@ -13,6 +13,19 @@ export async function createNewEvent() {
     return eventCreated;
 }
 
+export async function createExpiredEvent() {
+
+    const eventData = await createEventData();
+    
+    eventData.date = faker.date.past();
+
+    const eventCreated = await prisma.event.create({
+        data: eventData,
+    });
+
+    return eventCreated;
+}
+
 export async function createEventData() {
 
     const eventName = await createNewEventName();

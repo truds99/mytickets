@@ -30,9 +30,19 @@ describe("POST /tickets", () => {
         const { id } = await createExpiredEvent();
         const ticketData = await createTicketData(id);
 
-        const { status, error } = await api.post(`/tickets`).send(ticketData);
+        const { status } = await api.post(`/tickets`).send(ticketData);
 
         expect(status).toBe(403);
+
+    });
+
+    it("shouldn't create a ticket because data is invalid", async () => {
+        const { id } = await createNewEvent();
+        const ticketData = 'ticket';
+
+        const { status } = await api.post(`/tickets`).send(ticketData);
+
+        expect(status).toBe(422);
 
     });
 
